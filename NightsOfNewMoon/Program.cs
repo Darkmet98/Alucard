@@ -33,13 +33,11 @@ namespace NightsOfNewMoon
 
             
             Console.WriteLine("NightsOfNewMoon 1.0 - A simple ebm to po converter from the game Nights of Azure and Nights of Azure 2 by Darkmet98.");
-            Console.WriteLine("Thanks to Pleonex for the help and Yarhl libraries.");
             if (args.Length != 3 && args.Length != 2)
             {
                 Console.WriteLine("USAGE: [mono] TheNewMoon.exe -export/-import file ");
                 Console.WriteLine("Export to Po example: TheNewMoon.exe -export EVENT_MESSAGE_MM00_OP1_010.ebm ");
                 Console.WriteLine("Import Po example: TheNewMoon.exe -import EVENT_MESSAGE_MM00_OP1_010.po ");
-                Console.WriteLine("Read first the readme file before use this program!");
                 Environment.Exit(-1);
             }
 
@@ -68,6 +66,7 @@ namespace NightsOfNewMoon
 
                 case "-credits":
                     Console.WriteLine("Pleonex: Yarhl Libraries.");
+                    Console.WriteLine("Nex: Yarhl node implementation.");
                     break;
                 default:
                     Console.WriteLine("Error, the option has you entered is incorrrect.");
