@@ -16,22 +16,16 @@
 // along with NightsOfNewMoon. If not, see <http://www.gnu.org/licenses/>.
 //
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Yarhl.FileFormat;
 using Yarhl.FileSystem;
 using Yarhl.Media.Text;
 
 namespace NightsOfNewMoon
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-
-            
             Console.WriteLine("NightsOfNewMoon 1.0 - A simple ebm to po converter from the game Nights of Azure and Nights of Azure 2 by Darkmet98.");
             if (args.Length != 3 && args.Length != 2)
             {
@@ -41,8 +35,7 @@ namespace NightsOfNewMoon
                 Environment.Exit(-1);
             }
 
-
-            switch(args[0])
+            switch (args[0])
             {
                 case "-export":
                     // 1
@@ -56,18 +49,34 @@ namespace NightsOfNewMoon
 
                     Node nodoPo = nodo.Transform<BinaryFormat, Po>(converter);
                     //3
+
+                    string file = args[1].Remove(args[1].Length - 4);
+
                     nodoPo.Transform<Po2Binary, Po, BinaryFormat>()
-                    .Stream.WriteTo(args[1] + ".po");
+                    .Stream.WriteTo(file + ".po");
                     break;
 
                 case "-import":
+                    nodo = NodeFactory.FromFile(args[1]); // Po
 
+                    // 2
+                    Po2EBMBinary pogenerator = new Po2EBMBinary
+                    {
+                        Game = 0
+                    };
+
+                    nodo.Transform<Po2Binary, BinaryFormat, Po>();
+                    Node nodoEbm = nodo.Transform<Po, BinaryFormat>(pogenerator);
+                    //3
+                    file = args[1].Remove(args[1].Length - 3);
+                    nodoEbm.Stream.WriteTo(args[1] + ".ebmx");
                     break;
 
                 case "-credits":
                     Console.WriteLine("Pleonex: Yarhl Libraries.");
                     Console.WriteLine("Nex: Yarhl node implementation.");
                     break;
+
                 default:
                     Console.WriteLine("Error, the option has you entered is incorrrect.");
                     break;

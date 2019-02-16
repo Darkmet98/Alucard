@@ -26,7 +26,6 @@ namespace NightsOfNewMoon
 {
     public class Binary2Po : IConverter<BinaryFormat, Po>
     {
-
         public byte Game { get; set; }
         public Dictionary<byte, string> Characters { get; set; }
 
@@ -37,7 +36,6 @@ namespace NightsOfNewMoon
 
         public Po Convert(BinaryFormat source)
         {
-
             GenerateCharacterName(Game); //Generate the name dictionary
 
             Po po = new Po
@@ -61,7 +59,7 @@ namespace NightsOfNewMoon
                 PoEntry entry = new PoEntry(); //Generate the entry on the po file
                 byte[] blockSentence = reader.ReadBytes(0x24); //Read the block
                 int sentenceSize = BitConverter.ToInt32(blockSentence, 0x20); //Get the sentence size
-                entry.ExtractedComments = CheckName(blockSentence[20]); //Get the speaking character
+                entry.ExtractedComments = CheckName(blockSentence[12]); //Get the speaking character
                 entry.Original = GenerateString(Encoding.UTF8.GetString(reader.ReadBytes(sentenceSize - 1))); //Add the string block
                 entry.Context = i.ToString(); //Context
                 entry.Reference = GenerateHeaderString(blockSentence); //Export the game block on a string
@@ -100,7 +98,7 @@ namespace NightsOfNewMoon
             var sb = new StringBuilder();
             foreach (byte bytes in array)
             {
-                result += sb.Append($"{{{bytes:X2}") + "}";
+                result += "0x" + sb.Append($"{bytes:X1}") + "|";
                 sb.Clear();
             }
             return result;
@@ -114,6 +112,7 @@ namespace NightsOfNewMoon
                 case 0:
                     file = "NOA.map";
                     break;
+
                 case 1:
                     file = "NOA2.map";
                     break;
