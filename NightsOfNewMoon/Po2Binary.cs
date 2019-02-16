@@ -39,6 +39,7 @@ namespace NightsOfNewMoon
         public BinaryFormat Convert(Po source)
         {
             GenerateFontMap(Game);
+
             BinaryFormat binary = new BinaryFormat();
             var writer = new DataWriter(binary.Stream);
             writer.Write((Int32)source.Entries.Count); //Write the number of blocks
@@ -112,9 +113,11 @@ namespace NightsOfNewMoon
                     FontChara.Add(lineFields[0], lineFields[1]);
                 }
             }
-            catch
+            catch (Exception e)
             {
+                Console.Beep();
                 Console.WriteLine("The dictionary is wrong, please, check the readme and fix it.");
+                Console.WriteLine(e);
                 System.Environment.Exit(-1);
             }
         }

@@ -27,6 +27,7 @@ namespace NightsOfNewMoon
     public class Binary2Po : IConverter<BinaryFormat, Po>
     {
         public byte Game { get; set; }
+        private bool DictionaryEnabled { get; set; }
         public Dictionary<byte, string> Characters { get; set; }
 
         public Binary2Po()
@@ -73,9 +74,16 @@ namespace NightsOfNewMoon
         private string CheckName(byte chara)
         {
             var sb = new StringBuilder();
-            if (Characters.TryGetValue(chara, out string result))
+            if (DictionaryEnabled)
             {
-                return result;
+                if (Characters.TryGetValue(chara, out string result))
+                {
+                    return result;
+                }
+                else
+                {
+                    return sb.Append($"{{{chara:X2}") + "}";
+                }
             }
             else
             {
@@ -117,19 +125,29 @@ namespace NightsOfNewMoon
                     file = "NOA2.map";
                     break;
             }
-            try
+            if (System.IO.File.Exists(file))
             {
-                string[] dictionary = System.IO.File.ReadAllLines(file);
-                foreach (string line in dictionary)
+                try
                 {
-                    string[] lineFields = line.Split('=');
-                    Characters.Add(System.Convert.ToByte(lineFields[0], 16), lineFields[1]);
+                    string[] dictionary = System.IO.File.ReadAllLines(file);
+                    foreach (string line in dictionary)
+                    {
+                        string[] lineFields = line.Split('=');
+                        Characters.Add(System.Convert.ToByte(lineFields[0], 16), lineFields[1]);
+                    }
                 }
+                catch (Exception e)
+                {
+                    Console.Beep();
+                    Console.WriteLine("The dictionary is wrong, please, check the readme and fix it.");
+                    Console.WriteLine(e);
+                    System.Environment.Exit(-1);
+                }
+                DictionaryEnabled = true;
             }
-            catch
+            else
             {
-                Console.WriteLine("The dictionary is wrong, please, check the readme and fix it.");
-                System.Environment.Exit(-1);
+                DictionaryEnabled = false;
             }
         }
     }
