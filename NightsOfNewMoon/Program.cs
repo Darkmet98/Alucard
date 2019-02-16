@@ -20,6 +20,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Yarhl.FileFormat;
+using Yarhl.FileSystem;
+using Yarhl.Media.Text;
 
 namespace NightsOfNewMoon
 {
@@ -27,7 +30,7 @@ namespace NightsOfNewMoon
     {
         static void Main(string[] args)
         {
-            var Exp = new ebm.Export();
+
             
             Console.WriteLine("NightsOfNewMoon 1.0 - A simple ebm to po converter from the game Nights of Azure and Nights of Azure 2 by Darkmet98.");
             Console.WriteLine("Thanks to Pleonex for the help and Yarhl libraries.");
@@ -40,10 +43,23 @@ namespace NightsOfNewMoon
                 Environment.Exit(-1);
             }
 
+
             switch(args[0])
             {
                 case "-export":
-                    Exp.GeneratePo(args[1], 0);
+                    // 1
+                    Node nodo = NodeFactory.FromFile(args[1]); // BinaryFormat
+
+                    // 2
+                    Binary2Po converter = new Binary2Po
+                    {
+                        Game = 0
+                    };
+
+                    Node nodoPo = nodo.Transform<BinaryFormat, Po>(converter);
+                    //3
+                    nodoPo.Transform<Po2Binary, Po, BinaryFormat>()
+                    .Stream.WriteTo(args[1] + ".po");
                     break;
 
                 case "-import":
