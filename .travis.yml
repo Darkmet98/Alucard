@@ -1,0 +1,7 @@
+## Travis CI Integration
+language: csharp
+solution: NightsOfNewMoon.sln
+install:
+  - nuget restore NightsOfNewMoon.sln
+  - nuget install Yarhl -Version 2.0.0
+  - nuget install Yarhl.Media -Version 2.0.0
