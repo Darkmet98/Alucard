@@ -126,7 +126,7 @@ namespace NightsOfNewMoon
                     file = "NOA2.map";
                     break;
                 case 2:
-                    file = "BF.map";
+                    file = "BR.map";
                     break;
 
                 case 3:
