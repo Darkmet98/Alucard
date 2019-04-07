@@ -27,17 +27,19 @@ namespace NightsOfNewMoon
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine("NightsOfNewMoon 1.0 - A simple ebm to po converter from the game Nights of Azure by Darkmet98.");
+            Console.WriteLine("NightsOfNewMoon 1.0 - A simple ebm to po converter for some Gust games by Darkmet98.");
+            Console.WriteLine("This program is licensed with a GPL V3 license.");
             if (args.Length != 3 && args.Length != 2 && args.Length != 1)
             {
-                Console.WriteLine("USAGE: [mono] TheNewMoon.exe <-export/-export_folder/-import/-import_folder/-credits> file/folder ");
-                Console.WriteLine("Export to Po example: TheNewMoon.exe -export EVENT_MESSAGE_MM00_OP1_010.ebm ");
-                Console.WriteLine("Export folder to Po example: TheNewMoon.exe -export_folder MM02_CP02");
-                Console.WriteLine("Import Po example: TheNewMoon.exe -import EVENT_MESSAGE_MM00_OP1_010.po ");
-                Console.WriteLine("Import folder to Po example: TheNewMoon.exe -import_folder MM02_CP02");
+                Console.WriteLine("USAGE: TheNewMoon.exe <-export/-export_folder/-import/-import_folder/-credits> file/folder <NOA/NOA2/BR/ATSO>");
+                Console.WriteLine("Export to POT example: TheNewMoon.exe -export EVENT_MESSAGE_MM00_OP1_010.ebm NOA");
+                Console.WriteLine("Export folder to POT example: TheNewMoon.exe -export_folder MM02_CP02 NOA2");
+                Console.WriteLine("Import PO example: TheNewMoon.exe -import EVENT_MESSAGE_MM00_OP1_010.po NOA");
+                Console.WriteLine("Import folder to Po example: TheNewMoon.exe -import_folder MM02_CP02 NOA2");
                 Environment.Exit(-1);
             }
-
+            Byte game = 0;
+            String gameName = "";
             switch (args[0])
             {
                 case "-export":
@@ -45,10 +47,44 @@ namespace NightsOfNewMoon
                         // 1
                         Node nodo = NodeFactory.FromFile(args[1]); // BinaryFormat
 
+
                         // 2
+                        if (args.Length != 3)
+                        {
+                            Console.WriteLine("Error, the game doesn't exist.");
+                            Console.Beep();
+                            Environment.Exit(-1);
+                        }
+                        switch(args[2].ToUpper())
+                        {
+                            case "NOA": //Nigts of Azure
+                                game = 0;
+                                gameName = "Nights Of Azure";
+                                break;
+
+                            case "NOA2": //Nigths Of Azure 2
+                                game = 1;
+                                gameName = "Nights Of Azure 2";
+                                break;
+                            case "BR": //Blue Reflection
+                                game = 2;
+                                gameName = "Blue Reflection";
+                                break;
+                            case "ATSO": //Atelier Sophie: The Alchemist of the Mysterious Book
+                                game = 3;
+                                gameName = "Atelier Sophie: The Alchemist of the Mysterious Book";
+                                break;
+                            default:
+                                Console.WriteLine("Error, the game doesn't exists.");
+                                Console.Beep();
+                                Environment.Exit(-1);
+                                break;
+                        }
+
                         Binary2Po converter = new Binary2Po
                         {
-                            Game = 0
+                            Game = game,
+                            GameName = gameName
                         };
 
                         Node nodoPo = nodo.Transform<BinaryFormat, Po>(converter);
@@ -58,7 +94,7 @@ namespace NightsOfNewMoon
                         string file = args[1].Remove(args[1].Length - 4);
 
                         nodoPo.Transform<Po2Binary, Po, BinaryFormat>()
-                        .Stream.WriteTo(file + ".po");
+                        .Stream.WriteTo(file + ".pot");
                     }
                     else
                     {
@@ -71,20 +107,54 @@ namespace NightsOfNewMoon
                     if (Directory.Exists(args[1]))
                     {
                         // 1
+
                         Node folder = NodeFactory.FromDirectory(args[1], "*.ebm"); // BinaryFormat
 
                         foreach (Node child in folder.Children)
                         {
                             // 2
+                            if (args.Length != 3)
+                            {
+                                Console.WriteLine("Error, the game doesn't exist.");
+                                Console.Beep();
+                                Environment.Exit(-1);
+                            }
+                            switch (args[2].ToUpper())
+                            {
+                                case "NOA": //Nigts of Azure
+                                    game = 0;
+                                    gameName = "Nights Of Azure";
+                                    break;
+
+                                case "NOA2": //Nigths Of Azure 2
+                                    game = 1;
+                                    gameName = "Nights Of Azure 2";
+                                    break;
+                                case "BR": //Blue Reflection
+                                    game = 2;
+                                    gameName = "Blue Reflection";
+                                    break;
+                                case "ATSO": //Atelier Sophie: The Alchemist of the Mysterious Book
+                                    game = 3;
+                                    gameName = "Atelier Sophie: The Alchemist of the Mysterious Book";
+                                    break;
+                                default:
+                                    Console.WriteLine("Error, the game doesn't exists.");
+                                    Console.Beep();
+                                    Environment.Exit(-1);
+                                    break;
+                            }
+
                             Binary2Po converter = new Binary2Po
                             {
-                                Game = 0
+                                Game = game,
+                                GameName = gameName
                             };
                             Node nodePo = child.Transform<BinaryFormat, Po>(converter);
                             //3
                             Console.WriteLine("Exporting " + child.Name + "...");
                             nodePo.Transform<Po2Binary, Po, BinaryFormat>()
-                            .Stream.WriteTo(Path.Combine(args[1], child.Name.Remove(child.Name.Length - 4) + ".po"));
+                            .Stream.WriteTo(Path.Combine(args[1], child.Name.Remove(child.Name.Length - 4) + ".pot"));
                         }
                     }
                     else
@@ -101,9 +171,35 @@ namespace NightsOfNewMoon
                         Node nodo = NodeFactory.FromFile(args[1]); // Po
 
                         // 2
+                        if (args.Length != 3)
+                        {
+                            Console.WriteLine("Error, the game doesn't exist.");
+                            Console.Beep();
+                            Environment.Exit(-1);
+                        }
+                        switch (args[2].ToUpper())
+                        {
+                            case "NOA": //Nigts of Azure
+                                game = 0;
+                                break;
+                            case "NOA2": //Nigths Of Azure 2
+                                game = 1;
+                                break;
+                            case "BR": //Blue Reflection
+                                game = 2;
+                                break;
+                            case "ATSO": //Atelier Sophie: The Alchemist of the Mysterious Book
+                                game = 3;
+                                break;
+                            default:
+                                Console.WriteLine("Error, the game doesn't exists.");
+                                Console.Beep();
+                                Environment.Exit(-1);
+                                break;
+                        }
                         Po2EBMBinary pogenerator = new Po2EBMBinary
                         {
-                            Game = 0
+                            Game = game
                         };
 
                         nodo.Transform<Po2Binary, BinaryFormat, Po>();
@@ -120,6 +216,62 @@ namespace NightsOfNewMoon
                     }
                     break;
 
+                case "-import_folder":
+                    if (Directory.Exists(args[1]))
+                    {
+                        // 1
+
+                        Node folder = NodeFactory.FromDirectory(args[1], "*.po"); // Pos
+
+                        foreach (Node child in folder.Children)
+                        {
+                            // 2
+                            if (args.Length != 3)
+                            {
+                                Console.WriteLine("Error, the game doesn't exist.");
+                                Console.Beep();
+                                Environment.Exit(-1);
+                            }
+                            switch (args[2].ToUpper())
+                            {
+                                case "NOA": //Nigts of Azure
+                                    game = 0;
+                                    break;
+                                case "NOA2": //Nigths Of Azure 2
+                                    game = 1;
+                                    break;
+                                case "BR": //Blue Reflection
+                                    game = 2;
+                                    break;
+                                case "ATSO": //Atelier Sophie: The Alchemist of the Mysterious Book
+                                    game = 3;
+                                    break;
+                                default:
+                                    Console.WriteLine("Error, the game doesn't exists.");
+                                    Console.Beep();
+                                    Environment.Exit(-1);
+                                    break;
+                            }
+                            Po2EBMBinary pogenerator = new Po2EBMBinary
+                            {
+                                Game = game
+                            };
+
+                            Node pofile = child.Transform<Po2Binary, BinaryFormat, Po>();
+                            Node nodoEbm = pofile.Transform<Po, BinaryFormat>(pogenerator);
+
+                            //3
+                            Console.WriteLine("Exporting " + child.Name + "...");
+                            nodoEbm.Stream.WriteTo(Path.Combine(args[1], child.Name.Remove(child.Name.Length - 3) + ".ebm"));
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error, the folder doesn't exist.");
+                        Console.Beep();
+                    }
+                    break;
+
                 case "-credits":
                     Console.WriteLine("Pleonex: Yarhl Libraries.");
                     Console.WriteLine("Nex: Yarhl node implementation.");
@@ -132,3 +284,4 @@ namespace NightsOfNewMoon
         }
     }
 }
+ 

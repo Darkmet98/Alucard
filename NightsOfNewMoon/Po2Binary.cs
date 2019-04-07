@@ -28,9 +28,8 @@ namespace NightsOfNewMoon
     public class Po2EBMBinary : IConverter<Po, BinaryFormat>
     {
         public byte Game { get; set; }
-
+        private bool DictionaryEnabled { get; set; }
         public Dictionary<string, string> FontChara { get; set; }
-
         public Po2EBMBinary()
         {
             FontChara = new Dictionary<string, string>();
@@ -62,7 +61,10 @@ namespace NightsOfNewMoon
 
                 //Write the text
                 writer.Write(stringblock);
-                writer.WriteTimes(0, 5);
+                if (Game == 0 || Game == 1) //Nights of Azure/Nigths of Azure 2
+                    writer.WriteTimes(0, 5);
+                else if (Game == 2 || Game == 3) //Blue Reflection/Atelier Sophie: The Alchemist of the Mysterious Book
+                    writer.WriteTimes(0, 1);
             }
             return new BinaryFormat(binary.Stream);
         }
@@ -84,8 +86,12 @@ namespace NightsOfNewMoon
         private String ParseString(string text)
         {
             string result = text.Replace("\n", "<CR>");
-            foreach (var replace in FontChara)
-                result = result.Replace(replace.Value, replace.Key);
+
+            if (DictionaryEnabled)
+            {
+                foreach (var replace in FontChara)
+                    result = result.Replace(replace.Value, replace.Key);
+            }
             if (result == "<!empty>")
                 result = string.Empty;
             return result;
@@ -96,29 +102,43 @@ namespace NightsOfNewMoon
             string file = "";
             switch (game)
             {
-                case 0:
+                case 0: //Nights Of Azure
                     file = "FONT_NOA.map";
                     break;
 
-                case 1:
+                case 1: //Nights Of Azure 2
                     file = "FONT_NOA2.map";
                     break;
+                case 2: //Blue Reflection
+                    file = "FONT_BR.map";
+                    break;
+                case 3: //Atelier Sophie: The Alchemist of the Mysterious Book
+                    file = "FONT_ATSO.map";
+                    break;
             }
-            try
+            if (System.IO.File.Exists(file))
             {
-                string[] dictionary = System.IO.File.ReadAllLines(file);
-                foreach (string line in dictionary)
+                try
                 {
-                    string[] lineFields = line.Split('=');
-                    FontChara.Add(lineFields[0], lineFields[1]);
+                    string[] dictionary = System.IO.File.ReadAllLines(file);
+                    foreach (string line in dictionary)
+                    {
+                        string[] lineFields = line.Split('=');
+                        FontChara.Add(lineFields[0], lineFields[1]);
+                    }
                 }
+                catch (Exception e)
+                {
+                    Console.Beep();
+                    Console.WriteLine("The dictionary is wrong, please, check the readme and fix it.");
+                    Console.WriteLine(e);
+                    System.Environment.Exit(-1);
+                }
+                DictionaryEnabled = true;
             }
-            catch (Exception e)
+            else
             {
-                Console.Beep();
-                Console.WriteLine("The dictionary is wrong, please, check the readme and fix it.");
-                Console.WriteLine(e);
-                System.Environment.Exit(-1);
+                DictionaryEnabled = false;
             }
         }
     }

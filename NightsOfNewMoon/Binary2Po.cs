@@ -27,6 +27,7 @@ namespace NightsOfNewMoon
     public class Binary2Po : IConverter<BinaryFormat, Po>
     {
         public byte Game { get; set; }
+        public string GameName { get; set; }
         private bool DictionaryEnabled { get; set; }
         public Dictionary<byte, string> Characters { get; set; }
 
@@ -41,10 +42,7 @@ namespace NightsOfNewMoon
 
             Po po = new Po
             {
-                Header = new PoHeader("Nights Of Azure", "glowtranslations@gmail.es", "es")
-                {
-                    LanguageTeam = "GlowTranslations",
-                }
+                Header = new PoHeader(GameName, "dummy@dummy.com", "en-US")
             };
 
             var reader = new DataReader(source.Stream)
@@ -64,7 +62,10 @@ namespace NightsOfNewMoon
                 entry.Original = GenerateString(Encoding.UTF8.GetString(reader.ReadBytes(sentenceSize - 1))); //Add the string block
                 entry.Context = i.ToString(); //Context
                 entry.Reference = GenerateHeaderString(blockSentence); //Export the game block on a string
-                reader.Stream.Position = reader.Stream.Position + 0x5; //Skip padding
+                if (Game == 0 || Game == 1) //Nights of Azure/Nigths of Azure 2
+                    reader.Stream.Position += 0x5; //Skip padding
+                else if (Game == 2 || Game == 3) //Blue Reflection/Atelier Sophie: The Alchemist of the Mysterious Book
+                    reader.Stream.Position += 0x1; //Skip padding
                 po.Add(entry);
             }
 
@@ -122,7 +123,7 @@ namespace NightsOfNewMoon
                     break;
 
                 case 1:
-                    file = "NOA2.map";
+                    file = "BF.map";
                     break;
             }
             if (System.IO.File.Exists(file))
