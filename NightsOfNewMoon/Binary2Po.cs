@@ -123,7 +123,14 @@ namespace NightsOfNewMoon
                     break;
 
                 case 1:
+                    file = "NOA2.map";
+                    break;
+                case 2:
                     file = "BF.map";
+                    break;
+
+                case 3:
+                    file = "ATSO.map";
                     break;
             }
             if (System.IO.File.Exists(file))

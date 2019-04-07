@@ -31,11 +31,11 @@ namespace NightsOfNewMoon
             Console.WriteLine("This program is licensed with a GPL V3 license.");
             if (args.Length != 3 && args.Length != 2 && args.Length != 1)
             {
-                Console.WriteLine("USAGE: TheNewMoon.exe <-export/-export_folder/-import/-import_folder/-credits> file/folder <NOA/NOA2/BR/ATSO>");
-                Console.WriteLine("Export to POT example: TheNewMoon.exe -export EVENT_MESSAGE_MM00_OP1_010.ebm NOA");
-                Console.WriteLine("Export folder to POT example: TheNewMoon.exe -export_folder MM02_CP02 NOA2");
-                Console.WriteLine("Import PO example: TheNewMoon.exe -import EVENT_MESSAGE_MM00_OP1_010.po NOA");
-                Console.WriteLine("Import folder to Po example: TheNewMoon.exe -import_folder MM02_CP02 NOA2");
+                Console.WriteLine("USAGE: NightsOfNewMoon <-export/-export_folder/-import/-import_folder/-credits> file/folder <NOA/NOA2/BR/ATSO>");
+                Console.WriteLine("Export to POT example: NightsOfNewMoon,exe -export EVENT_MESSAGE_MM00_OP1_010.ebm NOA");
+                Console.WriteLine("Export folder to POT example: NightsOfNewMoon.exe -export_folder MM02_CP02 NOA2");
+                Console.WriteLine("Import PO example: NightsOfNewMoon.exe -import EVENT_MESSAGE_MM00_OP1_010.po NOA");
+                Console.WriteLine("Import folder to Po example: NightsOfNewMoon.exe -import_folder MM02_CP02 NOA2");
                 Environment.Exit(-1);
             }
             Byte game = 0;
