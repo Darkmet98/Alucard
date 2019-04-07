@@ -12,18 +12,18 @@ NightsOfNewMoon.exe <-export/-export_folder/-import/-import_folder/-credits> fil
 
 # Dictionary - Font
 If you need to replace some strings (like & to á), create a "FONT_%GAME%.map" (Replace %GAME% with the name game will you translate (NOA/NOA2/BR/ATSO)) file on the program folder and put "Value original"="Value replaced" like this (&=á) and NightsOfNewMoon will replace the strings.
-![Dictionary](https://github.com/Darkmet98/NightsOfNewMoon/blob/master/Tutorial1.png?raw=true)
+![Dictionary](https://github.com/Darkmet98/NightsOfNewMoon/blob/master/Tutorial1.jpg?raw=true)
 
 # Dictionary - Character names
 With NightsOfNewMoon, you have the posibility to get all character names for the translation and make it so easier!
 First, export a file and open it with Poedit.
 And you have this
-![Tutorial](https://github.com/Darkmet98/NightsOfNewMoon/blob/master/Tutorial2.png?raw=true)
+![Tutorial](https://github.com/Darkmet98/NightsOfNewMoon/blob/master/Tutorial2.jpg?raw=true)
 Do you see the hex value? Now, go to the game and reproduce the game situation with the text displayed
-![Game](https://github.com/Darkmet98/NightsOfNewMoon/blob/master/Tutorial3.png?raw=true)
+![Game](https://github.com/Darkmet98/NightsOfNewMoon/blob/master/Tutorial3.jpg?raw=true)
 And now, create a "%GAME%.map" (Replace %GAME% with the name game will you import (NOA/NOA2/BR/ATSO)) file on the program folder and put "Hex value"="Name" like this (00=Sophie) and NightsOfNewMoon when you are exporting the files, you now have the characters names on the translation!
-![Dictionary](https://github.com/Darkmet98/NightsOfNewMoon/blob/master/Tutorial4.png?raw=true)
-![Dictionary](https://github.com/Darkmet98/NightsOfNewMoon/blob/master/Tutorial5.png?raw=true)
+![Dictionary](https://github.com/Darkmet98/NightsOfNewMoon/blob/master/Tutorial4.jpg?raw=true)
+![Dictionary](https://github.com/Darkmet98/NightsOfNewMoon/blob/master/Tutorial5.jpg?raw=true)
 
 # Tested on
 * Nights Of Azure
