@@ -2,6 +2,10 @@
 # NightsOfNewMoon
 A gust games translation toolkit.
 
+# Changelog
+## 1.0
+* Initial version
+
 # Usage
 NightsOfNewMoon.exe <-export/-export_folder/-import/-import_folder/-credits> file/folder <NOA/NOA2/BR/ATSO>
 
