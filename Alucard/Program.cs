@@ -16,8 +16,10 @@
 // along with NightsOfNewMoon. If not, see <http://www.gnu.org/licenses/>.
 //
 using System;
+using System.Globalization;
 using System.IO;
 using Alucard.ELF.NOA;
+using SiA.Library;
 using Yarhl.FileFormat;
 using Yarhl.FileSystem;
 using Yarhl.IO;
@@ -90,13 +92,13 @@ namespace Alucard
                             GameName = gameName
                         };
 
-                        Node nodoPo = nodo.Transform<BinaryFormat, Po>(converter);
+                        Node nodoPo = nodo.TransformWith(converter);
                         //3
                         Console.WriteLine("Exporting " + args[1] + "...");
 
                         string file = args[1].Remove(args[1].Length - 4);
 
-                        nodoPo.Transform<Po2Binary, Po, BinaryFormat>()
+                        nodoPo.TransformWith<Po2Binary>()
                         .Stream.WriteTo(file + ".po");
                     }
                     else
@@ -153,11 +155,11 @@ namespace Alucard
                                 Game = game,
                                 GameName = gameName
                             };
-                            Node nodePo = child.Transform<BinaryFormat, Po>(converter);
+                            Node nodePo = child.TransformWith(converter);
                             //3
                             Console.WriteLine("Exporting " + child.Name + "...");
-                            nodePo.Transform<Po2Binary, Po, BinaryFormat>()
-                            .Stream.WriteTo(Path.Combine(args[1], child.Name.Remove(child.Name.Length - 4) + ".po"));
+                            nodePo.TransformWith<Po2Binary>().Stream.WriteTo
+                             (Path.Combine(args[1], child.Name.Remove(child.Name.Length - 4) + ".po"));
                         }
                     }
                     else
@@ -205,8 +207,8 @@ namespace Alucard
                             Game = game
                         };
 
-                        nodo.Transform<Po2Binary, BinaryFormat, Po>();
-                        Node nodoEbm = nodo.Transform<Po, BinaryFormat>(pogenerator);
+                        nodo.TransformWith<Po2Binary>();
+                        Node nodoEbm = nodo.TransformWith(pogenerator);
                         //3
                         Console.WriteLine("Importing " + args[1] + "...");
                         string file = args[1].Remove(args[1].Length - 3);
@@ -260,8 +262,8 @@ namespace Alucard
                                 Game = game
                             };
 
-                            Node pofile = child.Transform<Po2Binary, BinaryFormat, Po>();
-                            Node nodoEbm = pofile.Transform<Po, BinaryFormat>(pogenerator);
+                            Node pofile = child.TransformWith<Po2Binary>();
+                            Node nodoEbm = pofile.TransformWith(pogenerator);
 
                             //3
                             Console.WriteLine("Exporting " + child.Name + "...");
@@ -274,14 +276,76 @@ namespace Alucard
                         Console.Beep();
                     }
                     break;
+                case "-export_XML":
+                    if (File.Exists(args[1]))
+                    {
+                        using Node file = NodeFactory.FromFile(args[1]);
+                        file.TransformWith<Decrypter>();
+                        Console.WriteLine("Decrypting " + args[1] + "...");
+                        file.Stream.WriteTo(args[1].Remove(args[1].Length-2));
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error, the file doesn't exist.");
+                        Console.Beep();
+                    }
+                    break;
 
+                case "-export_XmlFolder":
+                    if (Directory.Exists(args[1]))
+                    {
+
+                        Node folder = NodeFactory.CreateContainer("XML");
+                        
+                        
+                        string[] folderXml = Directory.GetFiles(args[1],
+                            "*.xml.e",
+                            SearchOption.AllDirectories);
+
+
+                        foreach (string file in folderXml)
+                        {
+                            Node nodo = NodeFactory.FromFile(file);
+                            folder.Add(nodo);
+                        }
+
+                        if (!Directory.Exists("Decrypted"))
+                            Directory.CreateDirectory("Decrypted");
+
+                        foreach (Node child in folder.Children)
+                        {
+                            Console.WriteLine("Decrypting " + child.Name + "...");
+                            child.TransformWith<Decrypter>();
+
+                            string fileLocation = SearchFile(folderXml, child.Name);
+
+                            child.Stream.WriteTo("Decrypted/" + fileLocation);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error, the folder doesn't exist.");
+                        Console.Beep();
+                    }
+                    break;
                 case "-PatchExe":
                     if (File.Exists(args[1]))
                     {
+                        if (!args[1].Contains("CNN.exe"))
+                        {
+                            Console.WriteLine("Error, this function for now is only compatible with NOA.");
+                            Console.Beep();
+                            return;
+                        }
                         DataStream fileStream = new DataStream(args[1], FileOpenMode.ReadWrite);
                         ELF_DisableXmlEncryption patch = new ELF_DisableXmlEncryption(fileStream);
                         var result = patch.Patch();
                         result.WriteTo(args[1].Remove(args[1].Length-4)+"_new.exe");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error, the file doesn't exist.");
+                        Console.Beep();
                     }
                     break;
 
@@ -289,6 +353,18 @@ namespace Alucard
                     Console.WriteLine("Error, the option has you entered is incorrect.");
                     break;
             }
+        }
+
+
+        private static string SearchFile(string[] array, string file)
+        {
+            foreach (var result in array)
+            {
+                if (result.Contains(file))
+                    return result;
+            }
+
+            return "";
         }
     }
 }
