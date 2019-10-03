@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Alucard": {
+      "commandName": "Project",
+      "commandLineArgs": "-export_XmlFolder Saves"
+    }
+  }
+}
