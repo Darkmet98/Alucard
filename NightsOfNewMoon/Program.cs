@@ -17,8 +17,10 @@
 //
 using System;
 using System.IO;
+using NightsOfNewMoon.ELF.NOA;
 using Yarhl.FileFormat;
 using Yarhl.FileSystem;
+using Yarhl.IO;
 using Yarhl.Media.Text;
 
 namespace NightsOfNewMoon
@@ -27,7 +29,8 @@ namespace NightsOfNewMoon
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine("NightsOfNewMoon 1.0 - A simple ebm to po converter for some Gust games by Darkmet98.");
+            Console.WriteLine("NightsOfNewMoon 1.1 - A simple tool to translate Gust games by Darkmet98.");
+            Console.WriteLine("Thanks to Pleonex for Yarhl libraries and xml.e decryption (SiA), Nex for the Yarhl node implementation and Kaplas80 for disable the xml decryption on NOA executable.");
             Console.WriteLine("This program is licensed with a GPL V3 license.");
             if (args.Length != 3 && args.Length != 2 && args.Length != 1)
             {
@@ -269,6 +272,16 @@ namespace NightsOfNewMoon
                     {
                         Console.WriteLine("Error, the folder doesn't exist.");
                         Console.Beep();
+                    }
+                    break;
+
+                case "-PatchExe":
+                    if (File.Exists(args[1]))
+                    {
+                        DataStream fileStream = new DataStream(args[1], FileOpenMode.ReadWrite);
+                        ELF_DisableXmlEncryption patch = new ELF_DisableXmlEncryption(fileStream);
+                        var result = patch.Patch();
+                        result.WriteTo(args[1].Remove(args[1].Length-4)+"_new.exe");
                     }
                     break;
 
