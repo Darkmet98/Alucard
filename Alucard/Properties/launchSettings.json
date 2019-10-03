@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Alucard": {
+      "commandName": "Project",
+      "commandLineArgs": "-import EVENT_MESSAGE_MM02_CP02_110.po NOA"
+    }
+  }
+}

@@ -23,7 +23,7 @@ using Yarhl.FileFormat;
 using Yarhl.IO;
 using Yarhl.Media.Text;
 
-namespace NightsOfNewMoon
+namespace Alucard
 {
     public class Po2EBMBinary : IConverter<Po, BinaryFormat>
     {

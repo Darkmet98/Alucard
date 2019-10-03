@@ -17,28 +17,28 @@
 //
 using System;
 using System.IO;
-using NightsOfNewMoon.ELF.NOA;
+using Alucard.ELF.NOA;
 using Yarhl.FileFormat;
 using Yarhl.FileSystem;
 using Yarhl.IO;
 using Yarhl.Media.Text;
 
-namespace NightsOfNewMoon
+namespace Alucard
 {
     internal class Program
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine("NightsOfNewMoon 1.1 - A simple tool to translate Gust games by Darkmet98.");
+            Console.WriteLine("Alucard 1.1 - A simple tool to translate Gust games by Darkmet98.");
             Console.WriteLine("Thanks to Pleonex for Yarhl libraries and xml.e decryption (SiA), Nex for the Yarhl node implementation and Kaplas80 for disable the xml decryption on NOA executable.");
             Console.WriteLine("This program is licensed with a GPL V3 license.");
             if (args.Length != 3 && args.Length != 2 && args.Length != 1)
             {
-                Console.WriteLine("USAGE: NightsOfNewMoon <-export/-export_folder/-import/-import_folder/-credits> file/folder <NOA/NOA2/BR/ATSO>");
-                Console.WriteLine("Export to POT example: NightsOfNewMoon,exe -export EVENT_MESSAGE_MM00_OP1_010.ebm NOA");
-                Console.WriteLine("Export folder to POT example: NightsOfNewMoon.exe -export_folder MM02_CP02 NOA2");
-                Console.WriteLine("Import PO example: NightsOfNewMoon.exe -import EVENT_MESSAGE_MM00_OP1_010.po NOA");
-                Console.WriteLine("Import folder to Po example: NightsOfNewMoon.exe -import_folder MM02_CP02 NOA2");
+                Console.WriteLine("USAGE: Alucard <-export/-export_folder/-import/-import_folder> file/folder <NOA/NOA2/BR/ATSO>");
+                Console.WriteLine("Export to PO example: Alucard -export EVENT_MESSAGE_MM00_OP1_010.ebm NOA");
+                Console.WriteLine("Export folder to PO example: Alucard -export_folder MM02_CP02 NOA2");
+                Console.WriteLine("Import PO example: Alucard -import EVENT_MESSAGE_MM00_OP1_010.po NOA");
+                Console.WriteLine("Import folder to Po example: Alucard -import_folder MM02_CP02 NOA2");
                 Environment.Exit(-1);
             }
             Byte game = 0;
@@ -97,7 +97,7 @@ namespace NightsOfNewMoon
                         string file = args[1].Remove(args[1].Length - 4);
 
                         nodoPo.Transform<Po2Binary, Po, BinaryFormat>()
-                        .Stream.WriteTo(file + ".pot");
+                        .Stream.WriteTo(file + ".po");
                     }
                     else
                     {
@@ -157,7 +157,7 @@ namespace NightsOfNewMoon
                             //3
                             Console.WriteLine("Exporting " + child.Name + "...");
                             nodePo.Transform<Po2Binary, Po, BinaryFormat>()
-                            .Stream.WriteTo(Path.Combine(args[1], child.Name.Remove(child.Name.Length - 4) + ".pot"));
+                            .Stream.WriteTo(Path.Combine(args[1], child.Name.Remove(child.Name.Length - 4) + ".po"));
                         }
                     }
                     else
@@ -285,13 +285,8 @@ namespace NightsOfNewMoon
                     }
                     break;
 
-                case "-credits":
-                    Console.WriteLine("Pleonex: Yarhl Libraries.");
-                    Console.WriteLine("Nex: Yarhl node implementation.");
-                    break;
-
                 default:
-                    Console.WriteLine("Error, the option has you entered is incorrrect.");
+                    Console.WriteLine("Error, the option has you entered is incorrect.");
                     break;
             }
         }

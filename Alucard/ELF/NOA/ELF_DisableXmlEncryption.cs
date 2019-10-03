@@ -22,7 +22,7 @@
  */
 using Yarhl.IO;
 
-namespace NightsOfNewMoon.ELF.NOA
+namespace Alucard.ELF.NOA
 {
     class ELF_DisableXmlEncryption
     {
