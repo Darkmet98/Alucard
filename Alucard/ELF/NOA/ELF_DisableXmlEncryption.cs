@@ -41,10 +41,10 @@ namespace Alucard.ELF.NOA
             Writer = new DataWriter(Executable);
 
             //Write the patch
-            Writer.Stream.Position = 0x3A51F9;
+            Writer.Stream.Position = 0x39BE79;
             Writer.Write((byte)0x8B);
 
-            Writer.Stream.Position = 0x3A524D;
+            Writer.Stream.Position = 0x39BECD;
             byte[] patchBytes = {0x48, 0x89, 0x7D, 0x38, 0xB0, 0x01, 0x90, 0x90, 0x90, 0x90, 0x90};
             Writer.Write(patchBytes);
 
