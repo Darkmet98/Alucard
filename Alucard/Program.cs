@@ -338,7 +338,8 @@ namespace Alucard
                             Console.Beep();
                             return;
                         }
-                        DataStream fileStream = new DataStream(args[1], FileOpenMode.ReadWrite);
+
+                        DataStream fileStream = DataStreamFactory.FromFile(args[1], FileOpenMode.ReadWrite);
                         ELF_DisableXmlEncryption patch = new ELF_DisableXmlEncryption(fileStream);
                         var result = patch.Patch();
                         result.WriteTo(args[1].Remove(args[1].Length-4)+"_new.exe");

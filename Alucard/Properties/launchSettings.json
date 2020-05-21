@@ -2,7 +2,7 @@
   "profiles": {
     "Alucard": {
       "commandName": "Project",
-      "commandLineArgs": "-export_XmlFolder Saves"
+      "commandLineArgs": "-import EVENT_MESSAGE_MM00_OP1_010.po NOA"
     }
   }
 }
