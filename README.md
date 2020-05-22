@@ -13,8 +13,16 @@ A simple tool to translate Gust games.
 * Added the function to patch the Nights Of Azure executable to load all xml.e displayeds (Thanks @Kaplas80)
 * New name
 
+## 1.2
+* Updated to Net Core 3.1
+* Added the xml patching for inserting custom characters
+* Updated NOA Patch to the 1.0.0.1 version
+* Updated Yarhl to v3 alpha-07
+* Fixed some bugs and improved speed
+* Now, the export_folder, import_folder functions search the all subdirectories from the specified path
+
 # Usage
-Alucard <-export/-export_folder/-import/-import_folder/-export_XML/-export_XMLFolder/-PatchExe> file/folder <NOA/NOA2/BR/ATSO>
+Alucard <-export/-export_folder/-import/-import_folder/-export_XML/-export_XMLFolder/-PatchExe/-Patchxml> file/folder <NOA/NOA2/BR/ATSO>
 
 * Export to POT example: Alucard -export EVENT_MESSAGE_MM00_OP1_010.ebm NOA
 * Export folder to POT example: Alucard -export_folder MM02_CP02 NOA2
@@ -22,7 +30,9 @@ Alucard <-export/-export_folder/-import/-import_folder/-export_XML/-export_XMLFo
 * Import folder to Po example: Alucard -import_folder MM02_CP02 NOA2
 * Export XML.e example: Alucard -export_XML AbilityData.xml.e
 * Export XML.e folder example: Alucard -export_XMLFolder Saves
-* Patch Nights Of Azure Executable to load decrypt xml.e: Alucard -PatchExe CNN.exe
+* Patch Nights Of Azure Executable to load decrypt xml.e: Alucard -PatchExe CNN.exe NOA
+* Patch xml.e files for replace your custom characters: Alucard -Patchxml activeSkillData.xml.e
+
 
 # Dictionary - Font
 If you need to replace some strings (like & to á), create a "FONT_%GAME%.map" (Replace %GAME% with the name game will you translate (NOA/NOA2/BR/ATSO)) file on the program folder and put "Value original"="Value replaced" like this (&=á) and Alucard will replace the strings.
