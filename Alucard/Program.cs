@@ -33,6 +33,14 @@ namespace Alucard
             if (args.Length != 3 && args.Length != 2 && args.Length != 1) 
                 Info();
 
+            //For Roli300
+            if (args[0].Contains("xml.e"))
+            {
+                var commandAlt = new Commands("DEFAULT");
+                commandAlt.PathXml(args[0]);
+                Environment.Exit(-1);
+            }
+
             Check(args[1]);
             var command = new Commands((args.Length == 3)? args[2]: "DEFAULT");
 
@@ -58,6 +66,9 @@ namespace Alucard
                     break;
                 case "-PATCHEXE":
                    command.PathExe(args[1]);
+                    break;
+                case "-PATCHXML":
+                    command.PathXml(args[1]);
                     break;
                 default:
                     Console.WriteLine("Error, the option has you entered is incorrect.");

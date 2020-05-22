@@ -29,7 +29,7 @@ namespace Alucard
     {
         public byte Game { get; set; }
         private bool DictionaryEnabled { get; set; }
-        public Dictionary<string, string> FontChara { get; set; }
+        private Dictionary<string, string> FontChara { get; }
         public Po2EBMBinary()
         {
             FontChara = new Dictionary<string, string>();
@@ -41,7 +41,7 @@ namespace Alucard
 
             BinaryFormat binary = new BinaryFormat();
             var writer = new DataWriter(binary.Stream);
-            writer.Write((Int32)source.Entries.Count); //Write the number of blocks
+            writer.Write((int)source.Entries.Count); //Write the number of blocks
             foreach (var entry in source.Entries)
             {
                 //Generate the block
@@ -57,7 +57,7 @@ namespace Alucard
 
                 //Write the size
                 writer.Stream.Position = writer.Stream.Position - 4;
-                writer.Write((Int32)stringblock.Length + 1);
+                writer.Write((int)stringblock.Length + 1);
 
                 //Write the text
                 writer.Write(stringblock);
@@ -83,9 +83,11 @@ namespace Alucard
             return result;
         }
 
-        private String ParseString(string text)
+        public string ParseString(string text, bool isXml=false)
         {
-            string result = text.Replace("\n", "<CR>");
+            var result = text;
+            if (!isXml)
+                result = result.Replace("\n", "<CR>");
 
             if (DictionaryEnabled)
             {
@@ -97,7 +99,7 @@ namespace Alucard
             return result;
         }
 
-        private void GenerateFontMap(int game)
+        public void GenerateFontMap(int game)
         {
             string file = "";
             switch (game)

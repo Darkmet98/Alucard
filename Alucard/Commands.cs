@@ -18,6 +18,7 @@
 using System;
 using System.IO;
 using Alucard.ELF.NOA;
+using Alucard.XML;
 using SiA.Library;
 using Yarhl.FileSystem;
 using Yarhl.IO;
@@ -172,6 +173,13 @@ namespace Alucard
             var result = patch.Patch();
             var fileName = Path.GetFileNameWithoutExtension(path) + "_new.exe";
             result.WriteTo(fileName);
+        }
+
+        public void PathXml(string path)
+        {
+            Console.WriteLine($"Patching {path}...");
+            var xml = new XmlReplacer(gameCode);
+            xml.Convert(path);
         }
 
         private Binary2Po Binary2Po()
