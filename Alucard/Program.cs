@@ -103,7 +103,7 @@ namespace Alucard
 
         private static void Info()
         {
-            Console.WriteLine("USAGE: Alucard <-export/-export_folder/-import/-import_folder/-export_XML/-export_XMLFolder/-PatchExe> file/folder <NOA/NOA2/BR/ATSO>");
+            Console.WriteLine("USAGE: Alucard <-export/-export_folder/-import/-import_folder/-export_XML/-export_XMLFolder/-PatchExe/-Patchxml> file/folder <NOA/NOA2/BR/ATSO>");
             Console.WriteLine("Export to PO example: Alucard -export EVENT_MESSAGE_MM00_OP1_010.ebm NOA");
             Console.WriteLine("Export folder to PO example: Alucard -export_folder MM02_CP02 NOA2");
             Console.WriteLine("Import PO example: Alucard -import EVENT_MESSAGE_MM00_OP1_010.po NOA");
@@ -111,6 +111,7 @@ namespace Alucard
             Console.WriteLine("Export XML.e example: Alucard -export_XML AbilityData.xml.e");
             Console.WriteLine("Export XML.e folder example: Alucard -export_XMLFolder Saves");
             Console.WriteLine("Patch Nights Of Azure Executable to load decrypted xml.e: Alucard -PatchExe CNN.exe NOA");
+            Console.WriteLine("Patch xml.e files for replace your custom characters: Alucard -Patchxml activeSkillData.xml.e");
             Environment.Exit(-1);
         }
     }
