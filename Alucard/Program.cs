@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2019 Pedro Garau Martínez
+﻿// Copyright (C) 2020 Pedro Garau Martínez
 //
 // This file is part of Alucard.
 //
@@ -17,11 +17,6 @@
 //
 using System;
 using System.IO;
-using Alucard.ELF.NOA;
-using SiA.Library;
-using Yarhl.FileSystem;
-using Yarhl.IO;
-using Yarhl.Media.Text;
 
 namespace Alucard
 {
@@ -29,344 +24,83 @@ namespace Alucard
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine("Alucard 1.1 - A simple tool to translate Gust games by Darkmet98.");
-            Console.WriteLine("Thanks to Pleonex for Yarhl libraries and xml.e decryption (SiA), Nex for the Yarhl node implementation and Kaplas80 for disable the xml encryption on NOA executable.");
+            Console.WriteLine("Alucard 1.2 - A simple tool to translate Gust games by Darkmet98.");
+            Console.WriteLine("Thanks to Pleonex for Yarhl libraries and xml.e decryption (SiA)," +
+                              " Nex for the Yarhl node implementation " +
+                              "and Kaplas80 for disable the xml encryption on NOA executable.");
             Console.WriteLine("This program is licensed with a GPL V3 license.");
-            if (args.Length != 3 && args.Length != 2 && args.Length != 1)
+            
+            if (args.Length != 3 && args.Length != 2 && args.Length != 1) 
+                Info();
+
+            Check(args[1]);
+            var command = new Commands((args.Length == 3)? args[2]: "DEFAULT");
+
+            switch (args[0].ToUpper())
             {
-                Console.WriteLine("USAGE: Alucard <-export/-export_folder/-import/-import_folder/-export_XML/-export_XMLFolder/-PatchExe> file/folder <NOA/NOA2/BR/ATSO>");
-                Console.WriteLine("Export to PO example: Alucard -export EVENT_MESSAGE_MM00_OP1_010.ebm NOA");
-                Console.WriteLine("Export folder to PO example: Alucard -export_folder MM02_CP02 NOA2");
-                Console.WriteLine("Import PO example: Alucard -import EVENT_MESSAGE_MM00_OP1_010.po NOA");
-                Console.WriteLine("Import folder to Po example: Alucard -import_folder MM02_CP02 NOA2");
-                Console.WriteLine("Export XML.e example: Alucard -export_XML AbilityData.xml.e");
-                Console.WriteLine("Export XML.e folder example: Alucard -export_XMLFolder Saves");
-                Console.WriteLine("Patch Nights Of Azure Executable to load decrypt xml.e: Alucard -PatchExe CNN.exe");
-                Environment.Exit(-1);
-            }
-            Byte game = 0;
-            String gameName = "";
-            switch (args[0])
-            {
-                case "-export":
-                    if (File.Exists(args[1])) {
-                        // 1
-                        Node nodo = NodeFactory.FromFile(args[1]); // BinaryFormat
-
-
-                        // 2
-                        if (args.Length != 3)
-                        {
-                            Console.WriteLine("Error, the game doesn't exist.");
-                            Console.Beep();
-                            Environment.Exit(-1);
-                        }
-                        switch(args[2].ToUpper())
-                        {
-                            case "NOA": //Nigts of Azure
-                                game = 0;
-                                gameName = "Nights Of Azure";
-                                break;
-
-                            case "NOA2": //Nigths Of Azure 2
-                                game = 1;
-                                gameName = "Nights Of Azure 2";
-                                break;
-                            case "BR": //Blue Reflection
-                                game = 2;
-                                gameName = "Blue Reflection";
-                                break;
-                            case "ATSO": //Atelier Sophie: The Alchemist of the Mysterious Book
-                                game = 3;
-                                gameName = "Atelier Sophie: The Alchemist of the Mysterious Book";
-                                break;
-                            default:
-                                Console.WriteLine("Error, the game doesn't exists.");
-                                Console.Beep();
-                                Environment.Exit(-1);
-                                break;
-                        }
-
-                        Binary2Po converter = new Binary2Po
-                        {
-                            Game = game,
-                            GameName = gameName
-                        };
-
-                        Node nodoPo = nodo.TransformWith(converter);
-                        //3
-                        Console.WriteLine("Exporting " + args[1] + "...");
-
-                        string file = args[1].Remove(args[1].Length - 4);
-
-                        nodoPo.TransformWith<Po2Binary>()
-                        .Stream.WriteTo(file + ".po");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Error, the file doesn't exist.");
-                        Console.Beep();
-                    }
+                case "-EXPORT":
+                    command.ExportEbm(args[1]);
                     break;
-
-                case "-export_folder":
-                    if (Directory.Exists(args[1]))
-                    {
-                        // 1
-
-                        Node folder = NodeFactory.FromDirectory(args[1], "*.ebm"); // BinaryFormat
-
-                        foreach (Node child in folder.Children)
-                        {
-                            // 2
-                            if (args.Length != 3)
-                            {
-                                Console.WriteLine("Error, the game doesn't exist.");
-                                Console.Beep();
-                                Environment.Exit(-1);
-                            }
-                            switch (args[2].ToUpper())
-                            {
-                                case "NOA": //Nigts of Azure
-                                    game = 0;
-                                    gameName = "Nights Of Azure";
-                                    break;
-
-                                case "NOA2": //Nigths Of Azure 2
-                                    game = 1;
-                                    gameName = "Nights Of Azure 2";
-                                    break;
-                                case "BR": //Blue Reflection
-                                    game = 2;
-                                    gameName = "Blue Reflection";
-                                    break;
-                                case "ATSO": //Atelier Sophie: The Alchemist of the Mysterious Book
-                                    game = 3;
-                                    gameName = "Atelier Sophie: The Alchemist of the Mysterious Book";
-                                    break;
-                                default:
-                                    Console.WriteLine("Error, the game doesn't exists.");
-                                    Console.Beep();
-                                    Environment.Exit(-1);
-                                    break;
-                            }
-
-                            Binary2Po converter = new Binary2Po
-                            {
-                                Game = game,
-                                GameName = gameName
-                            };
-                            Node nodePo = child.TransformWith(converter);
-                            //3
-                            Console.WriteLine("Exporting " + child.Name + "...");
-                            nodePo.TransformWith<Po2Binary>().Stream.WriteTo
-                             (Path.Combine(args[1], child.Name.Remove(child.Name.Length - 4) + ".po"));
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Error, the folder doesn't exist.");
-                        Console.Beep();
-                    }
+                case "-EXPORT_FOLDER":
+                    command.ExportEbmFolder(args[1]);
                     break;
-
-                case "-import":
-                    if (File.Exists(args[1]))
-                    {
-                        // 1
-                        Node nodo = NodeFactory.FromFile(args[1]); // Po
-
-                        // 2
-                        if (args.Length != 3)
-                        {
-                            Console.WriteLine("Error, the game doesn't exist.");
-                            Console.Beep();
-                            Environment.Exit(-1);
-                        }
-                        switch (args[2].ToUpper())
-                        {
-                            case "NOA": //Nigts of Azure
-                                game = 0;
-                                break;
-                            case "NOA2": //Nigths Of Azure 2
-                                game = 1;
-                                break;
-                            case "BR": //Blue Reflection
-                                game = 2;
-                                break;
-                            case "ATSO": //Atelier Sophie: The Alchemist of the Mysterious Book
-                                game = 3;
-                                break;
-                            default:
-                                Console.WriteLine("Error, the game doesn't exists.");
-                                Console.Beep();
-                                Environment.Exit(-1);
-                                break;
-                        }
-                        Po2EBMBinary pogenerator = new Po2EBMBinary
-                        {
-                            Game = game
-                        };
-
-                        nodo.TransformWith<Po2Binary>();
-                        Node nodoEbm = nodo.TransformWith(pogenerator);
-                        //3
-                        Console.WriteLine("Importing " + args[1] + "...");
-                        string file = args[1].Remove(args[1].Length - 3);
-                        nodoEbm.Stream.WriteTo(file + ".ebm");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Error, the file doesn't exist.");
-                        Console.Beep();
-                    }
+                case "-IMPORT":
+                    command.ImportEbm(args[1]);
                     break;
-
-                case "-import_folder":
-                    if (Directory.Exists(args[1]))
-                    {
-                        // 1
-
-                        Node folder = NodeFactory.FromDirectory(args[1], "*.po"); // Pos
-
-                        foreach (Node child in folder.Children)
-                        {
-                            // 2
-                            if (args.Length != 3)
-                            {
-                                Console.WriteLine("Error, the game doesn't exist.");
-                                Console.Beep();
-                                Environment.Exit(-1);
-                            }
-                            switch (args[2].ToUpper())
-                            {
-                                case "NOA": //Nigts of Azure
-                                    game = 0;
-                                    break;
-                                case "NOA2": //Nigths Of Azure 2
-                                    game = 1;
-                                    break;
-                                case "BR": //Blue Reflection
-                                    game = 2;
-                                    break;
-                                case "ATSO": //Atelier Sophie: The Alchemist of the Mysterious Book
-                                    game = 3;
-                                    break;
-                                default:
-                                    Console.WriteLine("Error, the game doesn't exists.");
-                                    Console.Beep();
-                                    Environment.Exit(-1);
-                                    break;
-                            }
-                            Po2EBMBinary pogenerator = new Po2EBMBinary
-                            {
-                                Game = game
-                            };
-
-                            Node pofile = child.TransformWith<Po2Binary>();
-                            Node nodoEbm = pofile.TransformWith(pogenerator);
-
-                            //3
-                            Console.WriteLine("Exporting " + child.Name + "...");
-                            nodoEbm.Stream.WriteTo(Path.Combine(args[1], child.Name.Remove(child.Name.Length - 3) + ".ebm"));
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Error, the folder doesn't exist.");
-                        Console.Beep();
-                    }
+                case "-IMPORT_FOLDER":
+                    command.ImportEbmFolder(args[1]);
                     break;
-                case "-export_XML":
-                    if (File.Exists(args[1]))
-                    {
-                        using Node file = NodeFactory.FromFile(args[1]);
-                        file.TransformWith<Decrypter>();
-                        Console.WriteLine("Decrypting " + args[1] + "...");
-                        file.Stream.WriteTo(args[1].Remove(args[1].Length-2));
-                    }
-                    else
-                    {
-                        Console.WriteLine("Error, the file doesn't exist.");
-                        Console.Beep();
-                    }
+                case "-EXPORT_XML":
+                   command.DecryptXml(args[1]);
                     break;
-
-                case "-export_XMLFolder":
-                    if (Directory.Exists(args[1]))
-                    {
-
-                        Node folder = NodeFactory.CreateContainer("XML");
-                        
-                        
-                        string[] folderXml = Directory.GetFiles(args[1],
-                            "*.xml.e",
-                            SearchOption.AllDirectories);
-
-
-                        foreach (string file in folderXml)
-                        {
-                            Node nodo = NodeFactory.FromFile(file);
-                            folder.Add(nodo);
-                        }
-
-                        if (!Directory.Exists("Decrypted"))
-                            Directory.CreateDirectory("Decrypted");
-
-                        foreach (Node child in folder.Children)
-                        {
-                            Console.WriteLine("Decrypting " + child.Name + "...");
-                            child.TransformWith<Decrypter>();
-
-                            string fileLocation = SearchFile(folderXml, child.Name);
-
-                            child.Stream.WriteTo("Decrypted/" + fileLocation);
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Error, the folder doesn't exist.");
-                        Console.Beep();
-                    }
+                case "-EXPORT_XMLFOLDER":
+                   command.DecryptXmlFolder(args[1]);
                     break;
-                case "-PatchExe":
-                    if (File.Exists(args[1]))
-                    {
-                        if (!args[1].Contains("CNN.exe"))
-                        {
-                            Console.WriteLine("Error, this function for now is only compatible with NOA.");
-                            Console.Beep();
-                            return;
-                        }
-
-                        DataStream fileStream = DataStreamFactory.FromFile(args[1], FileOpenMode.ReadWrite);
-                        ELF_DisableXmlEncryption patch = new ELF_DisableXmlEncryption(fileStream);
-                        var result = patch.Patch();
-                        result.WriteTo(args[1].Remove(args[1].Length-4)+"_new.exe");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Error, the file doesn't exist.");
-                        Console.Beep();
-                    }
+                case "-PATCHEXE":
+                   command.PathExe(args[1]);
                     break;
-
                 default:
                     Console.WriteLine("Error, the option has you entered is incorrect.");
                     break;
             }
         }
 
-
-        private static string SearchFile(string[] array, string file)
+        private static void Check(string path)
         {
-            foreach (var result in array)
+            if (!string.IsNullOrWhiteSpace(path))
             {
-                if (result.Contains(file))
-                    return result;
-            }
+                if (File.Exists(path)) 
+                    return;
+                
+                var attr = File.GetAttributes(path);
 
-            return "";
+                if (attr.HasFlag(FileAttributes.Directory)) 
+                    return;
+
+                Console.WriteLine("Error, the file doesn't exist.");
+                Console.Beep();
+                Environment.Exit(-1);
+            }
+            else
+            {
+                Console.WriteLine("Error, the path is empty.");
+                Console.Beep();
+                Environment.Exit(-1);
+            }
+           
+        }
+
+        private static void Info()
+        {
+            Console.WriteLine("USAGE: Alucard <-export/-export_folder/-import/-import_folder/-export_XML/-export_XMLFolder/-PatchExe> file/folder <NOA/NOA2/BR/ATSO>");
+            Console.WriteLine("Export to PO example: Alucard -export EVENT_MESSAGE_MM00_OP1_010.ebm NOA");
+            Console.WriteLine("Export folder to PO example: Alucard -export_folder MM02_CP02 NOA2");
+            Console.WriteLine("Import PO example: Alucard -import EVENT_MESSAGE_MM00_OP1_010.po NOA");
+            Console.WriteLine("Import folder to Po example: Alucard -import_folder MM02_CP02 NOA2");
+            Console.WriteLine("Export XML.e example: Alucard -export_XML AbilityData.xml.e");
+            Console.WriteLine("Export XML.e folder example: Alucard -export_XMLFolder Saves");
+            Console.WriteLine("Patch Nights Of Azure Executable to load decrypted xml.e: Alucard -PatchExe CNN.exe NOA");
+            Environment.Exit(-1);
         }
     }
 }
