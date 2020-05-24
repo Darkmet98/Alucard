@@ -17,6 +17,7 @@
 //
 using System;
 using System.IO;
+using Alucard.ELF;
 using Alucard.ELF.NOA;
 using Alucard.XML;
 using SiA.Library;
@@ -89,6 +90,17 @@ namespace Alucard
                         .Stream.WriteTo(path);
                 }
             }
+        }
+
+        public void ExportElf(string file)
+        {
+            Console.WriteLine($"Exporting {file}...");
+
+            var nodoPo = NodeFactory.FromFile(file).
+                TransformWith<ExportElf_common>();
+
+            nodoPo.TransformWith<Po2Binary>()
+                .Stream.WriteTo(Path.GetFileNameWithoutExtension(file) + ".po");
         }
 
         public void DecryptXml(string path)

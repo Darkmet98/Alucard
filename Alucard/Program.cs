@@ -33,6 +33,7 @@ namespace Alucard
             if (args.Length != 3 && args.Length != 2 && args.Length != 1) 
                 Info();
 
+
             //For Roli300
             if (args[0].Contains("xml.e"))
             {
@@ -69,6 +70,9 @@ namespace Alucard
                     break;
                 case "-PATCHXML":
                     command.PathXml(args[1]);
+                    break;
+                case "-EXPORTEXE":
+                    command.ExportElf(args[1]);
                     break;
                 default:
                     Console.WriteLine("Error, the option has you entered is incorrect.");
