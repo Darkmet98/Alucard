@@ -33,6 +33,11 @@ namespace Alucard.ELF
             SearchPositions(0xA35B80, 0x1230); // Extras
             SearchPositions(0x9B7E40, 0x18F08); // Conversation 1
             SearchPositions(0x9E7FB8, 0xA4A8); // Conversation 2
+            SearchPositions(0xD6C710, 0x108); //Save mission info
+            SearchPositions(0x949EA0, 0x60); //Activities
+            SearchPositions(0x9B30B0, 0x2090); //Places
+            SearchPositions(0xA41A68, 0x31A0); // Item description
+
             GeneratePo();
 
             return po;
@@ -84,7 +89,7 @@ namespace Alucard.ELF
             if (data < 10000000)
                 return false;
             //Big value
-            if (data > 0x200000000)
+            if (data >= 0x200000000)
                 return false;
             //Null pointer
             if (data == 0x00000001ffffffff)
