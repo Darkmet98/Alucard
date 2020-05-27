@@ -37,7 +37,10 @@ namespace Alucard.ELF
             SearchPositions(0x949EA0, 0x60); //Activities
             SearchPositions(0x9B30B0, 0x2090); //Places
             SearchPositions(0xA41A68, 0x31A0); // Item description
-
+            Calculate_LEA_Instruction(0xB9D7F);
+            Calculate_LEA_Instruction(0xB9D9C);
+            Calculate_LEA_Instruction(0xB9DB9);
+            OnlyReadingText(0x8F192C);
             GeneratePo();
 
             return po;
@@ -51,11 +54,15 @@ namespace Alucard.ELF
             return Encoding.UTF8;
         }
 
-        private void DumpText(long position, int size = 0)
+        private void DumpText(long position,bool positionAbsolute=false, int size = 0)
         {
             reader.Stream.PushCurrentPosition();
 
-            reader.Stream.Position = position - 0x140001C00;
+            if (!positionAbsolute)
+                reader.Stream.Position = position - 0x140001C00;
+            else
+                reader.Stream.Position = position;
+
             var encoding = CheckEncoding(reader.ReadByte());
             reader.Stream.Position--;
 
@@ -122,6 +129,27 @@ namespace Alucard.ELF
                 DumpText(data);
             }
 
+        }
+
+        //Thanks Kaplas80 for explaining this
+        private void Calculate_LEA_Instruction(int position)
+        {
+            reader.Stream.Position = position;
+
+            var positionOr = reader.ReadUInt32();
+
+            var differencePos = (reader.Stream.Position) + 0x140000C00;
+
+            var realPosition = (differencePos + positionOr);
+
+            positions.Add(realPosition);
+            DumpText(realPosition);
+        }
+
+        private void OnlyReadingText(int position)
+        {
+            positions.Add(position);
+            DumpText(position, true);
         }
     }
 }
